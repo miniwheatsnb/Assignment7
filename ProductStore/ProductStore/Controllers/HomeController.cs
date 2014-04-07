@@ -34,8 +34,15 @@ namespace ProductStore.Controllers
             string apiUri = Url.HttpRouteUrl("DefaultApi", new { controller = "admin", });
             ViewBag.ApiUrl = new Uri(Request.Url, apiUri).AbsoluteUri.ToString();
 
+
             return View();
 
+        }
+
+        [Authorize(Roles = "Administrator")]
+        public ActionResult Admin()
+        {
+            return View();
         }
     }
 }
