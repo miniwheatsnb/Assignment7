@@ -12,7 +12,7 @@ using ProductStore.Models;
 
 namespace ProductStore.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class OrdersController : ApiController
     {
         private OrdersContext db = new OrdersContext();
@@ -46,33 +46,9 @@ namespace ProductStore.Controllers
             };
         }
 
-        // PUT api/Orders/5
-        public HttpResponseMessage PutOrder(int id, Order order)
-        {
-            if (!ModelState.IsValid)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
-            }
 
-            if (id != order.Id)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest);
-            }
-
-            db.Entry(order).State = EntityState.Modified;
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
-            }
-
-            return Request.CreateResponse(HttpStatusCode.OK);
-        }
-
+        // GET api/Orders/5
+        
         // POST api/Orders
         public HttpResponseMessage PostOrder(OrderDTO dto)
         {

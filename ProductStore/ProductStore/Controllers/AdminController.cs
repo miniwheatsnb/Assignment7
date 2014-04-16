@@ -12,7 +12,7 @@ using ProductStore.Models;
 
 namespace ProductStore.Controllers
 {
-    [Authorize(Roles = "Administrator")]
+    //[Authorize(Roles = "Administrator")]
     public class AdminController : ApiController
     {
         private OrdersContext db = new OrdersContext();
@@ -38,28 +38,25 @@ namespace ProductStore.Controllers
         // PUT api/Admin/5
         public HttpResponseMessage PutProduct(int id, Product product)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid && id == product.Id)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
-            }
+                db.Entry(product).State = EntityState.Modified;
 
-            if (id != product.Id)
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound);
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            else
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
             }
-
-            db.Entry(product).State = EntityState.Modified;
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
-            }
-
-            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
         // POST api/Admin
@@ -76,7 +73,7 @@ namespace ProductStore.Controllers
             }
             else
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
             }
         }
 
@@ -95,9 +92,9 @@ namespace ProductStore.Controllers
             {
                 db.SaveChanges();
             }
-            catch (DbUpdateConcurrencyException ex)
+            catch (DbUpdateConcurrencyException)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
+                return Request.CreateResponse(HttpStatusCode.NotFound);
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, product);
